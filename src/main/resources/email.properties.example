@@ -1,0 +1,10 @@
+# Properties for EmailService
+dutyroster.importer.service.email.username= # the username, e.g. my.name@googlemail.com
+dutyroster.importer.service.email.password= # the password of the email account
+dutyroster.importer.service.email.host= # the host, e.g. smtp.googlemail.com
+dutyroster.importer.service.email.sslSmtpPort= # the port, e.g. 587
+dutyroster.importer.service.email.sslOnConnect= # hmm... what was that again? dunno... i set it false
+dutyroster.importer.service.email.startTlsEnabled= # hmm... what was that again? dunno... i set it true
+dutyroster.importer.service.email.from= # the sender email address
+dutyroster.importer.service.email.subject= # the subject (should be an i18nized text, i know...), e.g. "your calendar was updated"
+dutyroster.importer.service.email.to= # the comma separated list of email recipients, e.g. first.name@googlemail.com,second.name@googlemail.com

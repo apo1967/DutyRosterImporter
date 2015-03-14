@@ -1,0 +1,5 @@
+# Properties for GoogleCalendarService
+dutyroster.importer.service.calendar.accountId= # the service account id
+dutyroster.importer.service.calendar.p12= # the key file for authorizing access to the calendar
+dutyroster.importer.service.calendar.application= # the application name that has been registered for the Google API
+dutyroster.importer.service.calendar.calendarId= # the id of the calendar, e.g. my.name@googlemail.com
