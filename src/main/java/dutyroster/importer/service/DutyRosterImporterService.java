@@ -86,7 +86,7 @@ public class DutyRosterImporterService {
             DutyRosterMonth oldRoster = calendarService.readDutyRosterMonth();
 
             DutyRosterDiff dutyRosterDiff = buildDiff(oldRoster, newRoster);
-            if (dutyRosterDiff.hasChanges()) {
+            if (dutyRosterDiff.hasDifferences()) {
                 importDutyRosterIntoGoogleCalendar(dutyRosterDiff);
             }
             return dutyRosterDiff;

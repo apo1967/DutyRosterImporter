@@ -25,6 +25,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -364,7 +365,7 @@ public class DutyRosterConverterService {
                 String cellText = tableCell.getText();
 
                 // have we encountered a row with dates?
-                if (cellText.matches("(0[1-9]|[12]\\d|3[01])\\.(0[1-9]|1[0-2])\\.")) {
+                if (isDate(cellText)) {
 
                     // yes -> parse the month and date of the following shifts in this column
                     DayAndMonth dayAndMonth = parseDate(cellText);
@@ -374,8 +375,7 @@ public class DutyRosterConverterService {
                         log.info("importing for year/month [{}/month]", year, dayAndMonth.getMonth());
                     }
 
-                    // the shifts will follow at the current column position in the next rows -> look for
-                    // the three shifts we expect and add them to the duty roster, if found
+                    // up to three rows may contain the shifts for the current date
                     findShiftInColumnAndAddToDutyRoster(dutyRosterMonth, Shift.EARLY_SHIFT, table, rowCount,
                             cellCount, dayAndMonth);
                     findShiftInColumnAndAddToDutyRoster(dutyRosterMonth, Shift.LATE_SHIFT, table, rowCount,
@@ -388,6 +388,14 @@ public class DutyRosterConverterService {
             rowCount++;
         }
         return dutyRosterMonth;
+    }
+
+    /**
+     * @param text a text from a cell in the docx table
+     * @return true, if the text seems to be a date, e.g. "01.04."
+     */
+    private boolean isDate(String text) {
+        return text.matches("(0[1-9]|[12]\\d|3[01])\\.(0[1-9]|1[0-2])\\.");
     }
 
     /**
@@ -442,14 +450,20 @@ public class DutyRosterConverterService {
      * @param dutyRosterMonth the current {@link dutyroster.importer.domain.DutyRosterMonth} we're working on
      * @param shift           the shift we are looking for
      * @param table           the imported table from the docx
-     * @param rowCount        the current row (that contains a date specifier, e.g. "31.02.")
-     * @param cellCount       the current column number
+     * @param rowIndex        the current row (that contains a date specifier, e.g. "31.02.")
+     * @param columnIndex     the current column number
      * @param dayAndMonth     the day and month parsed from the current cell we're starting at, e.g. "31.02."
      */
     private void findShiftInColumnAndAddToDutyRoster(DutyRosterMonth dutyRosterMonth, Shift shift,
-                                                     XWPFTable table, int rowCount, int cellCount,
+                                                     XWPFTable table, int rowIndex, int columnIndex,
                                                      DayAndMonth dayAndMonth) {
         if (dutyRosterMonth == null) {
+            return;
+        }
+
+        int shiftRowOffset = findShiftRowOffset(table, shift, rowIndex);
+        if (shiftRowOffset == -1) {
+            log.warn("warning: no shift [{}] in duty roster DOCX", shift);
             return;
         }
 
@@ -465,7 +479,7 @@ public class DutyRosterConverterService {
         }
 
         try {
-            String personnel = table.getRow(rowCount + 1 + shift.ordinal()).getCell(cellCount)
+            String personnel = table.getRow(rowIndex + shiftRowOffset).getCell(columnIndex)
                     .getText();
             if (StringUtils.isNotBlank(personnel) && !StringUtils.equals(personnel, "-")) {
                 log.info("found shift {}.{}.: [{}]/[{}]",
@@ -476,6 +490,37 @@ public class DutyRosterConverterService {
             log.error("error finding early shift for date [{}]: [{}]", dayAndMonth,
                     e.getMessage());
         }
+    }
+
+    /**
+     * Find the position of the given {@link dutyroster.importer.domain.Shift} in the table. The shift label must
+     * be in the first column of the table. The lookup starts at the next row from the given row index.
+     *
+     * @param table    the duty roster table from the docx
+     * @param shift    the shift to look for
+     * @param rowIndex the current row index, i.e. a row, that contains the date of the shift
+     * @return the cell position of the shift or -1, if no appropriate shift label was found in the first column
+     */
+    private int findShiftRowOffset(XWPFTable table, Shift shift, int rowIndex) {
+
+        XWPFTableRow row;
+        int offset = 0;
+        while ((row = table.getRow(rowIndex + ++offset)) != null) {
+
+            String text = row.getCell(0).getText();
+            if (StringUtils.isBlank(text) || isDate(text)) {
+                // a blank cell indicates a date or any other row -> no shift for the current date found
+                return -1;
+            }
+
+            Shift foundShift = Shift.parseLabel(text);
+            if (shift == foundShift) {
+                return offset;
+            }
+        }
+
+        // end of table has been reached -> no such shift
+        return -1;
     }
 
     /**
