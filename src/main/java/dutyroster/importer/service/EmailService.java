@@ -2,6 +2,8 @@ package dutyroster.importer.service;
 
 import dutyroster.importer.domain.DutyRosterDiff;
 import dutyroster.importer.domain.DutyRosterShift;
+import dutyroster.importer.domain.DutyRosterStatistics;
+import dutyroster.importer.domain.ShiftAssignee;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
@@ -11,6 +13,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author apohl
@@ -59,7 +64,7 @@ public class EmailService {
      * @return the email to send
      * @throws EmailException
      */
-    public Email createUpdateEmail(DutyRosterDiff dutyRosterDiff) throws EmailException {
+    public Email createUpdateEmail(DutyRosterDiff dutyRosterDiff, DutyRosterStatistics dutyRosterStatistics) throws EmailException {
         Email email = new SimpleEmail();
         email.setDebug(false);
         email.setAuthentication(username, password);
@@ -80,10 +85,45 @@ public class EmailService {
                 .append(" Schichte(n) hinzugefügt und ") //
                 .append(dutyRosterDiff.getNumberOfChanges()) //
                 .append(" Schichte(n) geändert. \n") //
-                .append(createReportForEmail(dutyRosterDiff));
+                .append(createReportForEmail(dutyRosterDiff)) //
+                .append(createStatistics(dutyRosterStatistics));
         email.setMsg(sb.toString());
 
         return email;
+    }
+
+    private String createStatistics(DutyRosterStatistics statistics) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n") //
+                .append("\n-------------------------------------------") //
+                .append("\nStatistik:") //
+                .append("\nSchichten insgesamt : ").append(statistics.getTotalNoOfPossibleShifts()) //
+                .append("\nDavon besetzt:        ").append(statistics.getTotalNoOfAssignedShifts()) //
+                .append("\nIn %:                 ").append(statistics.getPercentageOfAssignedShifts()) //
+                .append("\nFrüh:                 ").append(statistics.getNoOfPossibleEarlyShifts()).append(" / ").append(statistics.getNoOfAssignedEarlyShifts())
+                .append("\nSpät:                 ").append(statistics.getNoOfPossibleLateShifts()).append(" / ").append(statistics.getNoOfAssignedLateShifts())
+                .append("\nNacht:                ").append(statistics.getNoOfPossibleNightShifts()).append(" / ").append(statistics.getNoOfAssignedNightShifts())
+                .append("\n\nPro Mitarbeiter gesamt / Prozent (Früh/Spät/Nacht):\n");
+
+        List<ShiftAssignee> values = new ArrayList<>();
+        values.addAll(statistics.getAssigness().values());
+        Collections.sort(values);
+
+        for (ShiftAssignee shiftAssignee : values) {
+            sb.append(shiftAssignee.getName()).append(": \t");
+            if (shiftAssignee.getName().length() > 7) {
+                sb.append("\t");
+            }
+            sb.append("\n")
+                    .append(shiftAssignee.getTotalNoOfShifts()).append(" / ")
+                    .append(shiftAssignee.getAssignedShiftsPercentage())
+                    .append(" (")
+                    .append(shiftAssignee.getNoOfEarlyShifts()).append("/")
+                    .append(shiftAssignee.getNoOfLateShifts()).append("/")
+                    .append(shiftAssignee.getNoOfNightShifts())
+                    .append(")");
+        }
+        return sb.toString();
     }
 
     /**

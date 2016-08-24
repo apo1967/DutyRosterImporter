@@ -1,7 +1,9 @@
 package dutyroster.importer.controller;
 
 import dutyroster.importer.domain.DutyRosterDiff;
+import dutyroster.importer.domain.DutyRosterStatistics;
 import dutyroster.importer.service.DutyRosterImporterService;
+import dutyroster.importer.service.DutyRosterStatisticsService;
 import dutyroster.importer.service.EmailService;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
@@ -29,6 +31,9 @@ public class DutyRosterImporterController {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private DutyRosterStatisticsService dutyRosterStatisticsService;
+
     @RequestMapping("/ping")
     public
     @ResponseBody
@@ -53,7 +58,10 @@ public class DutyRosterImporterController {
             return "no changes in duty roster";
         }
 
-        Email email = emailService.createUpdateEmail(dutyRosterDiff);
+        DutyRosterStatistics dutyRosterStatistics = dutyRosterStatisticsService.createDutyRosterStatistics(dutyRosterDiff.getOnlyAfter());
+        log.info("[handleConvertAndImport] statistics: [{}]", dutyRosterStatistics);
+
+        Email email = emailService.createUpdateEmail(dutyRosterDiff, dutyRosterStatistics);
         if (!dryRun) {
             email.send();
         } else {
