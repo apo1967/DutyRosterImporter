@@ -85,8 +85,8 @@ public class EmailService {
                 .append(" Schichte(n) hinzugefügt und ") //
                 .append(dutyRosterDiff.getNumberOfChanges()) //
                 .append(" Schichte(n) geändert. \n") //
-                .append(createReportForEmail(dutyRosterDiff)) //
-                .append(createStatistics(dutyRosterStatistics));
+                .append(createStatistics(dutyRosterStatistics)) //
+                .append(createReportForEmail(dutyRosterDiff));
         email.setMsg(sb.toString());
 
         return email;
@@ -103,18 +103,18 @@ public class EmailService {
                 .append("\nFrüh:                 ").append(statistics.getNoOfPossibleEarlyShifts()).append(" / ").append(statistics.getNoOfAssignedEarlyShifts())
                 .append("\nSpät:                 ").append(statistics.getNoOfPossibleLateShifts()).append(" / ").append(statistics.getNoOfAssignedLateShifts())
                 .append("\nNacht:                ").append(statistics.getNoOfPossibleNightShifts()).append(" / ").append(statistics.getNoOfAssignedNightShifts())
-                .append("\n\nPro Mitarbeiter gesamt / Prozent (Früh/Spät/Nacht):\n");
+                .append("\n\nPro Mitarbeiter gesamt / Prozent (Früh/Spät/Nacht):");
 
         List<ShiftAssignee> values = new ArrayList<>();
         values.addAll(statistics.getAssigness().values());
         Collections.sort(values);
 
         for (ShiftAssignee shiftAssignee : values) {
-            sb.append(shiftAssignee.getName()).append(": \t");
-            if (shiftAssignee.getName().length() > 7) {
+            sb.append("\n").append(shiftAssignee.getName()).append(": \t");
+            if (shiftAssignee.getName().length() < 7) {
                 sb.append("\t");
             }
-            sb.append("\n")
+            sb
                     .append(shiftAssignee.getTotalNoOfShifts()).append(" / ")
                     .append(shiftAssignee.getAssignedShiftsPercentage())
                     .append(" (")

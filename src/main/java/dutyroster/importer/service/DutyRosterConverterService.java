@@ -25,7 +25,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -372,7 +371,7 @@ public class DutyRosterConverterService {
 
                     if (dutyRosterMonth == null) {
                         dutyRosterMonth = new DutyRosterMonth(year, dayAndMonth.getMonth());
-                        log.info("importing for year/month [{}/month]", year, dayAndMonth.getMonth());
+                        log.info("importing for year/month [{}/{}]", year, dayAndMonth.getMonth());
                     }
 
                     // up to three rows may contain the shifts for the current date

@@ -38,17 +38,7 @@ public class DutyRosterStatisticsService {
                 statistics.increaseNoOfPossibleLateShifts();
             }
 
-            DutyRosterShift earlyShift = addAssignedDutyRosterShiftOfDay(i, dutyRosterMonth, statistics);
-            if (earlyShift != null) {
-                statistics.getNoOfAssignedEarlyShifts();
-                ShiftAssignee shiftAssignee = statistics.getAssigness().get(earlyShift.getName());
-                if (shiftAssignee == null) {
-                    shiftAssignee = new ShiftAssignee();
-                    shiftAssignee.setName(earlyShift.getName());
-                    statistics.getAssigness().put(shiftAssignee.getName(), shiftAssignee);
-                }
-                shiftAssignee.increaseNoOfEarlyShifts();
-            }
+            doStatistics(i, dutyRosterMonth, statistics);
         }
 
         // calculate percentages of assigned shifts per assignee
@@ -62,8 +52,13 @@ public class DutyRosterStatisticsService {
         return statistics;
     }
 
-    private DutyRosterShift addAssignedDutyRosterShiftOfDay(int day, DutyRosterMonth month, DutyRosterStatistics statistics) {
+    private void doStatistics(int day, DutyRosterMonth month, DutyRosterStatistics statistics) {
         Set<DutyRosterShift> dutyRosterShifts = month.getDutyRosterDays().get(day);
+        if (dutyRosterShifts == null) {
+            log.info("[doStatistics] no shifts in day [{}] in month [{}]", day, month);
+            return;
+        }
+
         for (DutyRosterShift dutyRosterShift : dutyRosterShifts) {
 
             Shift shift = dutyRosterShift.getShift();
@@ -93,6 +88,5 @@ public class DutyRosterStatisticsService {
                     throw new UnsupportedOperationException("unknown shift " + shift);
             }
         }
-        return null;
     }
 }

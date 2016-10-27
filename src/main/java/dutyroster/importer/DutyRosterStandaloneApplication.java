@@ -71,7 +71,8 @@ public class DutyRosterStandaloneApplication {
         }
 
         boolean dryRun = isDryRun(args);
-        LOG.info("importing [{}], year=[{}], month=[{}], dryRun=[{}]", filename, year, month, dryRun);
+        LOG.info("importing [{}], year=[{}], month=[{}], dryRun=[{}] (January is month [{}])", filename, year,
+                month, dryRun, Calendar.JANUARY);
         InputStream is = DutyRosterStandaloneApplication.class
                 .getResourceAsStream("/dutyrosterconverter/" + filename);
 
