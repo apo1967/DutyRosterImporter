@@ -13,9 +13,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author apohl
@@ -105,24 +102,30 @@ public class EmailService {
                 .append("\nNacht:                ").append(statistics.getNoOfPossibleNightShifts()).append(" / ").append(statistics.getNoOfAssignedNightShifts())
                 .append("\n\nPro Mitarbeiter gesamt / Prozent (Früh/Spät/Nacht):");
 
-        List<ShiftAssignee> values = new ArrayList<>();
-        values.addAll(statistics.getAssigness().values());
-        Collections.sort(values);
+        statistics.getAssigness().values().stream().sorted().forEach(assignee -> sb.append(buildStatisticForAssignee(assignee)));
+        return sb.toString();
+    }
 
-        for (ShiftAssignee shiftAssignee : values) {
-            sb.append("\n").append(shiftAssignee.getName()).append(": \t");
-            if (shiftAssignee.getName().length() < 7) {
-                sb.append("\t");
-            }
-            sb
-                    .append(shiftAssignee.getTotalNoOfShifts()).append(" / ")
-                    .append(shiftAssignee.getAssignedShiftsPercentage())
-                    .append(" (")
-                    .append(shiftAssignee.getNoOfEarlyShifts()).append("/")
-                    .append(shiftAssignee.getNoOfLateShifts()).append("/")
-                    .append(shiftAssignee.getNoOfNightShifts())
-                    .append(")");
+    /**
+     * Create the statistic details string for the given <code>assignee</code>
+     *
+     * @param assignee
+     * @return
+     */
+    private String buildStatisticForAssignee(ShiftAssignee assignee) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n").append(assignee.getName()).append(": \t");
+        if (assignee.getName().length() < 7) {
+            sb.append("\t");
         }
+        sb
+                .append(assignee.getTotalNoOfShifts()).append(" / ")
+                .append(assignee.getAssignedShiftsPercentage())
+                .append(" (")
+                .append(assignee.getNoOfEarlyShifts()).append("/")
+                .append(assignee.getNoOfLateShifts()).append("/")
+                .append(assignee.getNoOfNightShifts())
+                .append(")");
         return sb.toString();
     }
 

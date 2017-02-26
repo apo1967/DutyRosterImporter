@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 
 import java.time.*;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @author apo
@@ -16,6 +18,8 @@ import java.util.Set;
 public class DutyRosterStatisticsService {
 
     private final Logger log = LoggerFactory.getLogger(DutyRosterStatisticsService.class);
+
+    private Pattern pattern = Pattern.compile("^[\\w]+[ \\w\\.]*");
 
     public DutyRosterStatistics createDutyRosterStatistics(DutyRosterMonth dutyRosterMonth) {
         DutyRosterStatistics statistics = new DutyRosterStatistics();
@@ -63,12 +67,13 @@ public class DutyRosterStatisticsService {
 
             Shift shift = dutyRosterShift.getShift();
 
-            ShiftAssignee shiftAssignee = statistics.getAssigness().get(dutyRosterShift.getName());
+            String realName = findRealName(dutyRosterShift.getName());
+            ShiftAssignee shiftAssignee = statistics.getAssigness().get(realName);
 
             if (shiftAssignee == null) {
                 shiftAssignee = new ShiftAssignee();
-                shiftAssignee.setName(dutyRosterShift.getName());
-                statistics.getAssigness().put(shiftAssignee.getName(), shiftAssignee);
+                shiftAssignee.setName(realName);
+                statistics.getAssigness().put(realName, shiftAssignee);
             }
 
             switch (shift) {
@@ -88,5 +93,17 @@ public class DutyRosterStatisticsService {
                     throw new UnsupportedOperationException("unknown shift " + shift);
             }
         }
+    }
+
+    private String findRealName(String name) {
+        Matcher m = pattern.matcher(name.trim());
+        if (m.find()) {
+            String realName = m.group(0).trim();
+            if (!name.equals(realName)) {
+                log.info("[findRealName] real name of [{}] is [{}]", name, realName);
+            }
+            return realName;
+        }
+        return name;
     }
 }
