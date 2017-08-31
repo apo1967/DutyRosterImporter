@@ -7,6 +7,7 @@ import dutyroster.importer.service.DutyRosterConverterService;
 import dutyroster.importer.service.DutyRosterDiffService;
 import dutyroster.importer.service.DutyRosterShiftService;
 import dutyroster.importer.service.GoogleCalendarService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
@@ -23,9 +24,8 @@ import java.util.Calendar;
 /**
  * @author apohl
  */
+@Slf4j
 public class DutyRosterStandaloneApplication {
-
-    private static final Logger LOG = LoggerFactory.getLogger(DutyRosterStandaloneApplication.class);
 
     public static final String ARG_FILENAME = "-f";
 
@@ -47,7 +47,7 @@ public class DutyRosterStandaloneApplication {
             filename = parseFilenameFromArgs(args);
 
             if (!StringUtils.endsWith(filename, ".docx")) {
-                LOG.error("filename [{}] not supported", filename);
+                log.error("filename [{}] not supported", filename);
                 return;
             }
 
@@ -58,7 +58,7 @@ public class DutyRosterStandaloneApplication {
                 String[] monthTokens = StringUtils.split(strMonth, ".");
                 month = Integer.parseInt(monthTokens[0]) - 1;
             } catch (NumberFormatException e) {
-                LOG.error("can not parse year and month from [{}]", filename);
+                log.error("can not parse year and month from [{}]", filename);
                 return;
             }
         } else {
@@ -71,7 +71,7 @@ public class DutyRosterStandaloneApplication {
         }
 
         boolean dryRun = isDryRun(args);
-        LOG.info("importing [{}], year=[{}], month=[{}], dryRun=[{}] (January is month [{}])", filename, year,
+        log.info("importing [{}], year=[{}], month=[{}], dryRun=[{}] (January is month [{}])", filename, year,
                 month, dryRun, Calendar.JANUARY);
         InputStream is = DutyRosterStandaloneApplication.class
                 .getResourceAsStream("/dutyrosterconverter/" + filename);
@@ -98,7 +98,7 @@ public class DutyRosterStandaloneApplication {
             sendUpdateEmail(dutyRosterDiff, dryRun);
 
         } catch (Exception e) {
-            LOG.error("exception in main: ", e);
+            log.error("exception in main: ", e);
         }
     }
 
@@ -111,8 +111,8 @@ public class DutyRosterStandaloneApplication {
             if (StringUtils.startsWith(arg, ARG_FILENAME)) {
                 String filename = StringUtils.substring(arg, ARG_FILENAME.length());
                 if (StringUtils.isEmpty(filename)) {
-                    LOG.error("error parsing filename [{}] - no value", arg);
-                    LOG.error("correct filename argument: '" + ARG_FILENAME + "thefilename.docx'");
+                    log.error("error parsing filename [{}] - no value", arg);
+                    log.error("correct filename argument: '" + ARG_FILENAME + "thefilename.docx'");
                     return null;
                 }
                 return filename;
@@ -137,12 +137,12 @@ public class DutyRosterStandaloneApplication {
     private static void sendUpdateEmail(DutyRosterDiff dutyRosterDiff, boolean dryRun) throws EmailException {
         Email email = new SimpleEmail();
         email.setDebug(false);
-        email.setAuthentication("apohl67@googlemail.com", "MeTw3636399");
+        email.setAuthentication("xxx@googlemail.com", "xxx");
         email.setHostName("smtp.googlemail.com");
         email.setSSLOnConnect(false);
         email.setSslSmtpPort("587");
         email.setStartTLSEnabled(true);
-        email.setFrom("apohl67@googlemail.com");
+        email.setFrom("xxx@xxx");
         email.setSubject("Update des Dienstplans");
 
         StringBuilder sb = new StringBuilder();
@@ -157,12 +157,12 @@ public class DutyRosterStandaloneApplication {
                 .append(createReportForEmail(dutyRosterDiff));
         email.setMsg(sb.toString());
 
-        email.addTo("ali@pohllaurien.de");
-        email.addTo("conny@pohllaurien.de");
+        email.addTo("xxx@xxx");
+        email.addTo("yyy@yyy");
         if (!dryRun) {
             email.send();
         } else {
-            LOG.info("Running in dryRun mode, email to send would be:\n{}", sb.toString());
+            log.info("Running in dryRun mode, email to send would be:\n{}", sb.toString());
         }
     }
 
@@ -239,13 +239,13 @@ public class DutyRosterStandaloneApplication {
         DutyRosterDiffService diffService = new DutyRosterDiffService(new DutyRosterShiftService());
         DutyRosterDiff diff = diffService.diff(oldRoster, newRoster);
         if (diff.hasDifferences()) {
-            LOG.info("We got changes: [{}] new events, [{}] events to be deleted, [{}] changed events",
+            log.info("We got changes: [{}] new events, [{}] events to be deleted, [{}] changed events",
                     diff.getOnlyBefore().getAllDutyRosterDays().size(),
                     diff.getOnlyAfter().getAllDutyRosterDays().size(),
                     diff.getChanges().size());
-            LOG.debug(DutyRosterDiffService.toJson(diff));
+            log.debug(DutyRosterDiffService.toJson(diff));
         } else {
-            LOG.info("no changes");
+            log.info("no changes");
         }
         return diff;
     }

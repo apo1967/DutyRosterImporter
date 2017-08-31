@@ -180,13 +180,13 @@ public class GoogleCalendarService {
         List<Event> items = events.getItems();
 
         List<Event> filteredEvents = new ArrayList<>();
-        for (Event item : items) {
-            EventDateTime start = item.getStart();
-            DateTime startDate = start.getDateTime();
-            if (startDate.getValue() >= timeMin.getValue()) {
-                filteredEvents.add(item);
+        for (Event event : items) {
+            EventDateTime start = event.getStart();
+            DateTime startDate = start.getDateTime(); // startDate == null means all day event!
+            if (startDate != null && startDate.getValue() >= timeMin.getValue()) {
+                filteredEvents.add(event);
             } else {
-                log.info("ignoring event [{}] - start time [{}] is before [{}]", item, startDate, timeMin);
+                log.info("ignoring event [{}] - start time [{}] is before [{}]", event, startDate, timeMin);
             }
         }
         return filteredEvents;
