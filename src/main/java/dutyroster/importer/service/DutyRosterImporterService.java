@@ -3,6 +3,7 @@ package dutyroster.importer.service;
 import dutyroster.importer.domain.DutyRosterDiff;
 import dutyroster.importer.domain.DutyRosterMonth;
 import dutyroster.importer.domain.DutyRosterShift;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,9 +18,8 @@ import java.security.GeneralSecurityException;
  * @author apohl
  */
 @Service
+@Slf4j
 public class DutyRosterImporterService {
-
-    private final Logger log = LoggerFactory.getLogger(DutyRosterConverterService.class);
 
     private DutyRosterConverterService converterService;
 

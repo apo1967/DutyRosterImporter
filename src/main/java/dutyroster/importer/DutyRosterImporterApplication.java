@@ -1,5 +1,6 @@
 package dutyroster.importer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -19,11 +20,10 @@ import java.util.Arrays;
 @PropertySources({
         @PropertySource("classpath:calendar.properties"),
         @PropertySource("classpath:email.properties")})
+@Slf4j
 public class DutyRosterImporterApplication extends SpringBootServletInitializer {
 
-    private static final Logger log = LoggerFactory.getLogger(DutyRosterImporterApplication.class);
-
-    @Override
+   @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
         return application.sources(DutyRosterImporterApplication.class);
     }

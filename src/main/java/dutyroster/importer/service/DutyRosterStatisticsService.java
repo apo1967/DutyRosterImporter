@@ -1,6 +1,7 @@
 package dutyroster.importer.service;
 
 import dutyroster.importer.domain.*;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -15,9 +16,8 @@ import java.util.regex.Pattern;
  * @since 24.08.2016 22:04
  */
 @Service
+@Slf4j
 public class DutyRosterStatisticsService {
-
-    private final Logger log = LoggerFactory.getLogger(DutyRosterStatisticsService.class);
 
     private Pattern pattern = Pattern.compile("^[\\w]+[ \\w\\.]*");
 
@@ -26,8 +26,6 @@ public class DutyRosterStatisticsService {
 
         Instant instant = Instant.ofEpochMilli(dutyRosterMonth.getDate().getTime());
         LocalDate date = LocalDateTime.ofInstant(instant, ZoneId.systemDefault()).toLocalDate();
-
-        int noOfAssignableEarlyShifts, noOfAssignableLateShifts, noOfAssignableNightShifts = 0;
 
         int lastDay = LocalDate.of(date.getYear(), date.getMonth().plus(1), 1).minusDays(1).getDayOfMonth();
         log.info("[findNoOfShifts] lastDay of month [{}]: [{}]", date.getMonth(), lastDay);

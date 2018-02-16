@@ -9,6 +9,7 @@ import dutyroster.importer.domain.DutyRosterDiff;
 import dutyroster.importer.domain.DutyRosterMonth;
 import dutyroster.importer.domain.DutyRosterShift;
 import dutyroster.importer.util.DateUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTimeComparator;
@@ -26,9 +27,8 @@ import java.util.*;
  * @author apohl
  */
 @Service
+@Slf4j
 public class DutyRosterDiffService {
-
-    private final Logger log = LoggerFactory.getLogger(DutyRosterConverterService.class);
 
     private DutyRosterShiftService dutyRosterShiftService;
 

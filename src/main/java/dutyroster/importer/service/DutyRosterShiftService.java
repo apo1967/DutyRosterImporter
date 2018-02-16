@@ -6,6 +6,7 @@ package dutyroster.importer.service;
 import dutyroster.importer.domain.DutyRosterMonth;
 import dutyroster.importer.domain.DutyRosterShift;
 import dutyroster.importer.domain.Shift;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +22,10 @@ import java.util.Set;
  * @author apohl
  */
 @Service
+@Slf4j
 public class DutyRosterShiftService {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DutyRosterShiftService.class);
-
-    public static final String SEPARATOR_FOR_EVENT_SUMMARY = ": ";
+    private static final String SEPARATOR_FOR_EVENT_SUMMARY = ": ";
 
     /**
      * @param set   the set of {@link dutyroster.importer.domain.DutyRosterShift} to search within
@@ -62,7 +62,7 @@ public class DutyRosterShiftService {
      */
     public String[] parseEventSummary(String summary) {
         if (StringUtils.isEmpty(summary) || !StringUtils.contains(summary, SEPARATOR_FOR_EVENT_SUMMARY)) {
-            LOG.error("can not parse event [{}]", summary);
+            log.error("can not parse event [{}]", summary);
             return null;
         }
 
@@ -72,7 +72,7 @@ public class DutyRosterShiftService {
         try {
             Shift.parseLabel(split[0]);
         } catch (IllegalArgumentException e) {
-            LOG.error("can not parse event [{}]", summary);
+            log.error("can not parse event [{}]", summary);
             return null;
         }
 

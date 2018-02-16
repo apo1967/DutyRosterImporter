@@ -23,10 +23,10 @@ public class EmailService {
     @Value(value = "${dutyroster.importer.service.email.username}")
     private String username;
 
-    @Value(value = "${dutyroster.importer.service.email.password}")
+    @Value(value = "${dutyroster.importer.service.email.password]")
     private String password;
 
-    @Value(value = "${dutyroster.importer.service.email.host}")
+    @Value(value = "${dutyroster.importer.service.email}")
     private String host;
 
     @Value(value = "${dutyroster.importer.service.email.sslSmtpPort}")

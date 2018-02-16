@@ -7,6 +7,7 @@ import dutyroster.importer.domain.DutyRosterMonth;
 import dutyroster.importer.domain.DutyRosterShift;
 import dutyroster.importer.domain.Shift;
 import dutyroster.importer.util.DateUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
@@ -295,6 +296,7 @@ import java.util.Set;
  * @author apohl
  */
 @Service
+@Slf4j
 public class DutyRosterConverterService {
 
     /**
@@ -329,8 +331,6 @@ public class DutyRosterConverterService {
     private static final String NL = "\n";
 
     private static final String COMMA = ",";
-
-    private final Logger log = LoggerFactory.getLogger(DutyRosterConverterService.class);
 
     private DutyRosterShiftService dutyRosterShiftService;
 

@@ -3,6 +3,10 @@
  */
 package dutyroster.importer.domain;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -10,27 +14,18 @@ import java.util.Set;
 /**
  * @author apohl
  */
+@Getter
+@Setter
 public class DutyRosterDiff {
 
     /**
      * Simple wrapper for a change of a shift.
      */
+    @Getter
+    @AllArgsConstructor
     public static class Change {
         private DutyRosterShift before;
         private DutyRosterShift after;
-
-        public Change(DutyRosterShift before, DutyRosterShift after) {
-            this.before = before;
-            this.after = after;
-        }
-
-        public DutyRosterShift getBefore() {
-            return before;
-        }
-
-        public DutyRosterShift getAfter() {
-            return after;
-        }
     }
 
     /**
@@ -51,42 +46,6 @@ public class DutyRosterDiff {
     public DutyRosterDiff(int year, int month) {
         this.onlyBefore = new DutyRosterMonth(year, month);
         this.onlyAfter = new DutyRosterMonth(year, month);
-    }
-
-    public void setOnlyBefore(DutyRosterMonth onlyBefore) {
-        this.onlyBefore = onlyBefore;
-    }
-
-    public void setOnlyAfter(DutyRosterMonth onlyAfter) {
-        this.onlyAfter = onlyAfter;
-    }
-
-    public void setChanges(List<Change> changes) {
-        this.changes = changes;
-    }
-
-    public void addDutyRosterDayOnlyBefore(DutyRosterShift day) {
-        onlyBefore.addDutyRosterShift(day);
-    }
-
-    public void addDutyRosterDayOnlyAfter(DutyRosterShift day) {
-        onlyAfter.addDutyRosterShift(day);
-    }
-
-    public void addChangedShift(DutyRosterShift shiftBefore, DutyRosterShift shiftAfter) {
-        changes.add(new Change(shiftBefore, shiftAfter));
-    }
-
-    public DutyRosterMonth getOnlyBefore() {
-        return onlyBefore;
-    }
-
-    public DutyRosterMonth getOnlyAfter() {
-        return onlyAfter;
-    }
-
-    public List<Change> getChanges() {
-        return changes;
     }
 
     public boolean hasDeletions() {

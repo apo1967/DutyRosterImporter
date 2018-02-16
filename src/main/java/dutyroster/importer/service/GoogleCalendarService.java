@@ -14,6 +14,7 @@ import dutyroster.importer.domain.DutyRosterMonth;
 import dutyroster.importer.domain.DutyRosterShift;
 import dutyroster.importer.domain.Shift;
 import dutyroster.importer.util.DateUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.Validate;
 import org.apache.commons.lang3.time.DateUtils;
@@ -35,9 +36,8 @@ import java.util.*;
  * @author apohl
  */
 @Service
+@Slf4j
 public class GoogleCalendarService {
-
-    private final Logger log = LoggerFactory.getLogger(GoogleCalendarService.class);
 
     @Value(value = "${dutyroster.importer.service.calendar.calendarId}")
     private String calendarId;
