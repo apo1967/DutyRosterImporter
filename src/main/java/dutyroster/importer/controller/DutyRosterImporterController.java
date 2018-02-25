@@ -5,6 +5,7 @@ import dutyroster.importer.domain.DutyRosterStatistics;
 import dutyroster.importer.service.DutyRosterImporterService;
 import dutyroster.importer.service.DutyRosterStatisticsService;
 import dutyroster.importer.service.EmailService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.mail.Email;
 import org.apache.commons.mail.EmailException;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.internet.MimeMessage;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,32 +22,25 @@ import java.io.IOException;
  * Created by apo on 05.03.2015.
  */
 @RestController
-@RequestMapping("/api")
+@Slf4j
+@CrossOrigin
 public class DutyRosterImporterController {
 
-    private final Logger log = org.slf4j.LoggerFactory.getLogger(DutyRosterImporterController.class);
-
-    @Autowired
     private DutyRosterImporterService dutyRosterImporterService;
 
-    @Autowired
     private EmailService emailService;
 
-    @Autowired
     private DutyRosterStatisticsService dutyRosterStatisticsService;
 
-    @RequestMapping("/ping")
-    public
-    @ResponseBody
-    String ping() {
-        log.info("pong");
-        return "pong";
+    @Autowired
+    public DutyRosterImporterController(DutyRosterImporterService dutyRosterImporterService, EmailService emailService, DutyRosterStatisticsService dutyRosterStatisticsService) {
+        this.dutyRosterImporterService = dutyRosterImporterService;
+        this.emailService = emailService;
+        this.dutyRosterStatisticsService = dutyRosterStatisticsService;
     }
 
-    @RequestMapping(value = "/convertAndImport/{originalFilename}/{year}/{month}/{dryRun}/{createCsv}", method = RequestMethod.POST)
-    public
-    @ResponseBody
-    String handleConvertAndImport(@RequestBody String filename,
+    @PostMapping("/api/convertAndImport/{originalFilename}/{year}/{month}/{dryRun}/{createCsv}")
+    public String handleConvertAndImport(@RequestBody String filename,
                                   @PathVariable("originalFilename") String originalFilename,
                                   @PathVariable("dryRun") boolean dryRun,
                                   @PathVariable("createCsv") boolean createCsv,
@@ -73,4 +68,5 @@ public class DutyRosterImporterController {
         log.info("email {}: [{}]", (dryRun ? "(not sent)" : "sent"), emailContent);
         return emailContent;
     }
+
 }

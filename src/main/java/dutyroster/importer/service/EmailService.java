@@ -20,31 +20,31 @@ import java.text.SimpleDateFormat;
 @Service
 public class EmailService {
 
-    @Value(value = "${dutyroster.importer.service.email.username}")
+    @Value(value = "${dutyroster.importer.service.email.username:}")
     private String username;
 
-    @Value(value = "${dutyroster.importer.service.email.password]")
+    @Value(value = "${dutyroster.importer.service.email.password:]")
     private String password;
 
-    @Value(value = "${dutyroster.importer.service.email}")
+    @Value(value = "${dutyroster.importer.service.email:}")
     private String host;
 
-    @Value(value = "${dutyroster.importer.service.email.sslSmtpPort}")
+    @Value(value = "${dutyroster.importer.service.email.sslSmtpPort:}")
     private String sslSmtpPort;
 
-    @Value(value = "${dutyroster.importer.service.email.sslOnConnect}")
+    @Value(value = "${dutyroster.importer.service.email.sslOnConnect:false}")
     private boolean sslOnConnect;
 
-    @Value(value = "${dutyroster.importer.service.email.startTlsEnabled}")
+    @Value(value = "${dutyroster.importer.service.email.startTlsEnabled:true}")
     private boolean startTlsEnabled;
 
-    @Value(value = "${dutyroster.importer.service.email.from}")
+    @Value(value = "${dutyroster.importer.service.email.from:DutyRosterImporter}")
     private String from;
 
-    @Value(value = "${dutyroster.importer.service.email.subject}")
+    @Value(value = "${dutyroster.importer.service.email.subject:Duty Roster Update}")
     private String subject;
 
-    @Value(value = "${dutyroster.importer.service.email.to}")
+    @Value(value = "${dutyroster.importer.service.email.to:}")
     private String to;
 
     private DutyRosterShiftService dutyRosterShiftService;

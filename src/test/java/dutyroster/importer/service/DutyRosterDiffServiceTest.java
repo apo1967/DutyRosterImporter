@@ -2,7 +2,6 @@ package dutyroster.importer.service;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import dutyroster.importer.config.DutyRosterImporterTestConfig;
 import dutyroster.importer.domain.DutyRosterDiff;
 import dutyroster.importer.domain.DutyRosterMonth;
 import dutyroster.importer.domain.DutyRosterShift;
@@ -13,14 +12,16 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = DutyRosterImporterTestConfig.class)
+@RunWith(SpringRunner.class)
+@AutoConfigureMockMvc
+@SpringBootTest
 public class DutyRosterDiffServiceTest {
 
     private final Logger log = LoggerFactory.getLogger(DutyRosterDiffServiceTest.class);
@@ -32,7 +33,7 @@ public class DutyRosterDiffServiceTest {
     private DutyRosterShiftService dutyRosterShiftService;
 
     @Test
-    public void testDiff() throws Exception {
+    public void testDiff() {
 
         // given
         DutyRosterMonth month1 = new DutyRosterMonth(2014, 8);
