@@ -14,3 +14,7 @@
 # System Files
 .DS_Store
 Thumbs.db
+
+calendar.properties
+email.properties
+/src/main/resources/calendar
