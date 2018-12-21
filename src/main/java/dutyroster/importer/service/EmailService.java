@@ -20,38 +20,14 @@ import java.text.SimpleDateFormat;
 @Service
 public class EmailService {
 
-    @Value(value = "${dutyroster.importer.service.email.username:}")
-    private String username;
-
-    @Value(value = "${dutyroster.importer.service.email.password:]")
-    private String password;
-
-    @Value(value = "${dutyroster.importer.service.email:}")
-    private String host;
-
-    @Value(value = "${dutyroster.importer.service.email.sslSmtpPort:}")
-    private String sslSmtpPort;
-
-    @Value(value = "${dutyroster.importer.service.email.sslOnConnect:false}")
-    private boolean sslOnConnect;
-
-    @Value(value = "${dutyroster.importer.service.email.startTlsEnabled:true}")
-    private boolean startTlsEnabled;
-
-    @Value(value = "${dutyroster.importer.service.email.from:DutyRosterImporter}")
-    private String from;
-
-    @Value(value = "${dutyroster.importer.service.email.subject:Duty Roster Update}")
-    private String subject;
-
-    @Value(value = "${dutyroster.importer.service.email.to:}")
-    private String to;
-
     private DutyRosterShiftService dutyRosterShiftService;
 
+    private EmailProperties emailProperties;
+
     @Autowired
-    public EmailService(DutyRosterShiftService dutyRosterShiftService) {
+    public EmailService(DutyRosterShiftService dutyRosterShiftService, EmailProperties emailProperties) {
         this.dutyRosterShiftService = dutyRosterShiftService;
+        this.emailProperties = emailProperties;
     }
 
     /**
@@ -64,14 +40,14 @@ public class EmailService {
     public Email createUpdateEmail(DutyRosterDiff dutyRosterDiff, DutyRosterStatistics dutyRosterStatistics) throws EmailException {
         Email email = new SimpleEmail();
         email.setDebug(false);
-        email.setAuthentication(username, password);
-        email.setHostName(host);
-        email.setSSLOnConnect(sslOnConnect);
-        email.setSslSmtpPort(sslSmtpPort);
-        email.setStartTLSEnabled(startTlsEnabled);
-        email.setFrom(from);
-        email.setSubject(subject);
-        email.addTo(StringUtils.split(to, ","));
+        email.setAuthentication(emailProperties.getUsername(), emailProperties.getPassword());
+        email.setHostName(emailProperties.getHost());
+        email.setSSLOnConnect(emailProperties.isSslOnConnect());
+        email.setSslSmtpPort(emailProperties.getSslSmtpPort());
+        email.setStartTLSEnabled(emailProperties.isStartTlsEnabled());
+        email.setFrom(emailProperties.getFrom());
+        email.setSubject(emailProperties.getSubject());
+        email.addTo(StringUtils.split(emailProperties.getTo(), ","));
 
         StringBuilder sb = new StringBuilder();
         sb.append("Soeben wurde der Dienstplan aktualisiert.\n\n") //

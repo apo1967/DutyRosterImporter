@@ -394,7 +394,7 @@ public class DutyRosterConverterService {
      * @return true, if the text seems to be a date, e.g. "01.04."
      */
     private boolean isDate(String text) {
-        return text.matches("(0[1-9]|[12]\\d|3[01])\\.(0[1-9]|1[0-2])\\.");
+        return text.matches("([1-9]|0[1-9]|[12]\\d|3[01])\\.([1-9]|0[1-9]|1[0-2])\\.");
     }
 
     /**

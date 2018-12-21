@@ -1,5 +1,6 @@
 package dutyroster.importer;
 
+import dutyroster.importer.service.EmailProperties;
 import dutyroster.importer.storage.StorageProperties;
 import dutyroster.importer.storage.StorageService;
 import lombok.extern.slf4j.Slf4j;
@@ -21,12 +22,11 @@ import java.util.Arrays;
  * @author apohl
  */
 @SpringBootApplication
-// TODO: use EnableConfigurationProperties instead
 @PropertySources({
-        @PropertySource("classpath:calendar.properties"),
-        @PropertySource("classpath:email.properties")})
+        @PropertySource(value = "classpath:/calendar.properties", encoding = "UTF-8"),
+        @PropertySource(value = "classpath:/email.properties", encoding = "UTF-8")})
 @Slf4j
-@EnableConfigurationProperties(StorageProperties.class)
+@EnableConfigurationProperties({StorageProperties.class, EmailProperties.class})
 @RestController
 @CrossOrigin
 public class DutyRosterImporterApplication {
